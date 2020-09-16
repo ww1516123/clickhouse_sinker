@@ -20,12 +20,27 @@ type Kafka struct {
 	Brokers       string
 	ConsumerGroup string
 	Topic         string
-
+// TOK_ID_KRB_AP_REQ   = 256
+// GSS_API_GENERIC_TAG = 0x60
+// KRB5_USER_AUTH      = 1
+// KRB5_KEYTAB_AUTH    = 2
+// GSS_API_INITIAL     = 1
+// GSS_API_VERIFY      = 2
+// GSS_API_FINISH      = 3
 	Sasl struct {
 		Username string
 		Password string
+		Mechanism string
+		GSSAPI struct {
+			AuthType int
+			Username string
+			Password string
+			ServiceName string
+			Realm string
+			KerberosConfigPath string
+			KeyTabPath string
+		}
 	}
-
 	consumer *Consumer
 	context  context.Context
 	cancel   context.CancelFunc
@@ -67,6 +82,18 @@ func (k *Kafka) Start() error {
 		config.Net.SASL.User = k.Sasl.Username
 		config.Net.SASL.Password = k.Sasl.Password
 	}
+
+	if k.Sasl.Mechanism != "" {
+		config.Net.SASL.Enable = true
+		config.Net.SASL.Mechanism = sarama.SASLMechanism(k.Sasl.Mechanism)
+		config.Net.SASL.GSSAPI.AuthType = k.Sasl.GSSAPI.AuthType
+		config.Net.SASL.GSSAPI.Username = k.Sasl.GSSAPI.Username
+		config.Net.SASL.GSSAPI.ServiceName = k.Sasl.GSSAPI.ServiceName
+		config.Net.SASL.GSSAPI.Realm = k.Sasl.GSSAPI.Realm
+		config.Net.SASL.GSSAPI.KerberosConfigPath = k.Sasl.GSSAPI.KerberosConfigPath
+		config.Net.SASL.GSSAPI.KeyTabPath = k.Sasl.GSSAPI.KeyTabPath
+	}
+
 	if k.Earliest {
 		config.Consumer.Offsets.Initial = sarama.OffsetOldest
 	}

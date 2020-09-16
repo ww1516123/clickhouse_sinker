@@ -8,8 +8,9 @@ import (
 
 	"github.com/housepower/clickhouse_sinker/creator"
 	"github.com/housepower/clickhouse_sinker/task"
-	_ "github.com/kshvakov/clickhouse"
+	// "github.com/housepower/clickhouse_sinker/util"
 
+	_ "github.com/kshvakov/clickhouse"
 	"github.com/wswz/go_commons/app"
 )
 
@@ -46,6 +47,7 @@ func main() {
 		runner.Run()
 		return nil
 	}, func() error {
+		// util.MemStat()
 		runner.Close()
 		return nil
 	})

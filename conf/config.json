@@ -13,6 +13,7 @@
   "kafka": {
     "kfk1": {
       "brokers": "127.0.0.1:9092",
+      "version": "0.11.0.0",
       "sasl": {
         "password": "",
         "username": ""
